@@ -70,12 +70,10 @@ export interface ExtractResult {
   /** 0..1 per key. Below ~0.6 the UI should flag the value for review. */
   confidence: Partial<Record<IntakeKey, number>>;
   /**
-   * "stub" is a real value, not a placeholder to strip later. It lands in the
-   * exported JSON as `meta.extractionSource`, so anyone reading the payload
-   * can tell whether a document was genuinely parsed. Never report "heuristic"
-   * for work the heuristic did not do.
+   * Lands in the exported JSON as `meta.extractionSource`, so anyone reading
+   * the payload can tell how a value was obtained.
    */
-  source: "llm" | "heuristic" | "stub";
+  source: "llm" | "heuristic";
   /** Human-readable note for the member when extraction went badly. */
   notice?: string;
 }
