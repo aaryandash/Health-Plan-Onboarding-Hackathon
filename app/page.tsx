@@ -45,7 +45,7 @@ export default function LandingPage() {
             emme
           </p>
 
-          <h1 className="mt-14 text-[3rem] leading-[0.98] font-bold tracking-tight sm:text-[4.5rem]">
+          <h1 className="mt-12 text-[2.5rem] leading-[1.03] font-bold tracking-tight sm:mt-14 sm:text-[4.5rem] sm:leading-[0.98]">
             Nobody should need a
             <span className="text-[#f0a184]"> decoder ring </span>
             to know what a doctor&rsquo;s visit costs.
@@ -87,15 +87,12 @@ export default function LandingPage() {
               <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                 What your statement says
               </p>
-              <p className="mt-5 font-mono text-[0.9375rem] leading-loose text-ink">
-                AMT APPLIED TO DED&nbsp;&nbsp;840.00
-                <br />
-                COINS&nbsp;&nbsp;20%
-                <br />
-                OOP ACCUM YTD&nbsp;&nbsp;1,240.00
-                <br />
-                PT RESP&nbsp;&nbsp;172.40
-              </p>
+              <pre className="mt-5 overflow-x-auto font-mono text-[0.8125rem] leading-loose whitespace-pre text-ink sm:text-[0.9375rem]">
+                {`AMT APPLIED TO DED   840.00
+COINS                   20%
+OOP ACCUM YTD      1,240.00
+PT RESP              172.40`}
+              </pre>
               <p className="mt-5 text-xs text-muted-foreground">
                 Synthetic example
               </p>

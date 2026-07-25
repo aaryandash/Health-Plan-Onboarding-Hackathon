@@ -164,12 +164,12 @@ function Summary() {
                       {group.rows.map((row) => (
                         <div
                           key={row.key}
-                          className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-3"
+                          className="py-3 sm:flex sm:items-baseline sm:justify-between sm:gap-6"
                         >
-                          <dt className="max-w-[60%] text-[0.9375rem] text-muted-foreground">
+                          <dt className="text-[0.9375rem] leading-snug text-muted-foreground sm:max-w-[60%]">
                             {row.label}
                           </dt>
-                          <dd className="text-right font-medium text-ink">
+                          <dd className="mt-1 font-medium text-ink sm:mt-0 sm:shrink-0 sm:text-right">
                             {row.display}
                             {provenance[row.key] === "extracted" && (
                               <span className="ml-2 text-xs font-normal text-[#8f4326]">

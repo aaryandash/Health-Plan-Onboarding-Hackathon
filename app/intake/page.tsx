@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Question } from "@/components/intake/question";
 import { SECTIONS, visibleFields, visibleSections } from "@/lib/schema";
@@ -24,7 +24,7 @@ const actionClass =
 function Counter() {
   const { questionsRemaining, progress } = useIntake();
   return (
-    <div className="border-b border-line bg-cream/95 px-6 py-4 backdrop-blur sm:px-10">
+    <div className="sticky top-0 z-20 border-b border-line bg-cream/95 px-6 py-4 backdrop-blur-sm sm:px-10">
       <div className="mx-auto flex w-full max-w-2xl items-baseline justify-between gap-4">
         <p className="text-[0.9375rem] text-muted-foreground">
           <span className="font-heading text-2xl font-bold text-navy tabular-nums">
@@ -135,6 +135,13 @@ function Flow() {
   const { draft, hydrated, resumed, reset } = useIntake();
   const [step, setStep] = useState(0);
 
+  // Someone returning from the summary to fix an answer should land back in
+  // the questions, not on the upload prompt they already dismissed. Step 0 is
+  // still reachable with Back.
+  useEffect(() => {
+    if (hydrated && resumed) setStep((s) => (s === 0 ? 1 : s));
+  }, [hydrated, resumed]);
+
   const sections = visibleSections(draft);
   const total = sections.length + 1; // upload step is step 0
   const section = step > 0 ? sections[step - 1] : null;
@@ -200,17 +207,25 @@ function Flow() {
           )}
 
           {step > 0 && !done && (
-            <div className="mt-10 flex items-center gap-6 border-t border-line pt-8">
+            <div className="mt-10 flex items-center gap-4 border-t border-line pt-8 sm:gap-6">
               <button
                 type="button"
-                onClick={() => setStep((s) => s - 1)}
-                className="text-[0.9375rem] font-medium text-navy underline underline-offset-4"
+                onClick={() => {
+                  setStep((s) => s - 1);
+                  window.scrollTo({ top: 0 });
+                }}
+                className="min-h-[3.25rem] px-2 text-[0.9375rem] font-medium text-navy underline underline-offset-4"
               >
                 Back
               </button>
               <button
                 type="button"
-                onClick={() => setStep((s) => s + 1)}
+                onClick={() => {
+                  setStep((s) => s + 1);
+                  // Without this, tapping Next on a long section leaves you
+                  // scrolled halfway down the next one.
+                  window.scrollTo({ top: 0 });
+                }}
                 className={`${actionClass} flex-1`}
               >
                 {step === sections.length ? "Finish" : "Next"}

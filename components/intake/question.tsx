@@ -17,6 +17,18 @@ const inputClass =
   "placeholder:text-muted-foreground focus-visible:border-navy focus-visible:outline-2 " +
   "focus-visible:outline-offset-0 focus-visible:outline-navy";
 
+// iOS renders native selects with its own chrome and ignores the border
+// radius. Strip the appearance and draw our own chevron so it matches every
+// other field on the page.
+const selectClass =
+  `${inputClass} appearance-none bg-[length:1.25rem] bg-[right_1rem_center] bg-no-repeat pr-11 ` +
+  `bg-[url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20fill%3D%27none%27%20viewBox%3D%270%200%2024%2024%27%20stroke%3D%27%2301447e%27%20stroke-width%3D%272%27%3E%3Cpath%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%20d%3D%27M6%209l6%206%206-6%27%2F%3E%3C%2Fsvg%3E")]`;
+
+// 44px minimum tap target (DESIGN.md). Negative margin keeps the visual
+// rhythm while the hit area grows.
+const inlineActionClass =
+  "min-h-[44px] -my-2 py-2 text-[0.9375rem] font-medium text-navy underline underline-offset-4";
+
 function ProvenanceBadge({ kind }: { kind: "extracted" | "inferred" }) {
   const label =
     kind === "extracted" ? "from your document" : "we filled this in";
@@ -69,7 +81,7 @@ export function Question({ field }: { field: Field }) {
         {field.type === "select" && (
           <select
             id={id}
-            className={inputClass}
+            className={selectClass}
             value={(value as string) ?? ""}
             onChange={(e) => commit(e.target.value || undefined)}
           >
@@ -208,12 +220,13 @@ export function Question({ field }: { field: Field }) {
         )}
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2">
+      <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-1">
         {field.findIt && (
           <button
             type="button"
             onClick={() => setShowHint((s) => !s)}
-            className="text-[0.9375rem] font-medium text-navy underline underline-offset-4"
+            aria-expanded={showHint}
+            className={inlineActionClass}
           >
             {showHint ? "Hide" : "Where do I find this?"}
           </button>
@@ -223,17 +236,17 @@ export function Question({ field }: { field: Field }) {
           <button
             type="button"
             onClick={() => skipField(field.key)}
-            className="text-[0.9375rem] font-medium text-navy underline underline-offset-4"
+            className={inlineActionClass}
           >
             I don&rsquo;t have this
           </button>
         ) : (
-          <span className="text-[0.9375rem] text-muted-foreground">
-            Skipped —{" "}
+          <span className="flex min-h-[44px] items-center gap-1.5 text-[0.9375rem] text-muted-foreground">
+            Skipped —
             <button
               type="button"
               onClick={() => unskipField(field.key)}
-              className="font-medium text-navy underline underline-offset-4"
+              className="min-h-[44px] font-medium text-navy underline underline-offset-4"
             >
               undo
             </button>
