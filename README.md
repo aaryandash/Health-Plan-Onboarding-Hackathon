@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Emme Health-Plan Onboarding
 
-## Getting Started
+An intake flow for [Emme](https://emme.com/) — a healthtech company that tells members what their care will cost under their own plan. This app collects the inputs Emme's cost engine needs, through a flow designed to feel like a reassuring first conversation instead of a medical form.
 
-First, run the development server:
+Built in a 4-hour hackathon. **This product does not estimate or display costs** — it only collects and structures plan inputs for Emme's downstream engine.
+
+## How it works
+
+- **`/`** — landing page explaining Emme, the problem, and what happens next.
+- **`/intake`** — the question flow. Upload an SBC/EOB (PDF or photo) to auto-fill fields, or skip straight to manual entry. Every question explains *why* Emme needs it. Progress auto-saves to `localStorage`.
+- **`/summary`** — "Here's what we know about your plan," restating the member's own numbers in plain English, plus a structured JSON export for Emme's backend.
+
+Document extraction (`POST /api/extract`) reads the uploaded PDF's text layer and regexes out cost-sharing fields (deductibles, OOP max, coinsurance, copays) with a per-field confidence score. It upgrades to an LLM-based path automatically when `ANTHROPIC_API_KEY` is set. Anything not extracted — or not uploaded at all — falls through to manual entry; that's expected behavior, not a failure state.
+
+## Stack
+
+Next.js 16 (App Router), React 19, TypeScript, Tailwind v4, shadcn/ui. Package manager is **npm**. Deploy target is Vercel.
+
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Other commands: `npm run build`, `npm run lint`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project docs
 
-## Learn More
+- **`AGENTS.md`** — team lanes, working rules, hard constraints (read this before touching any code).
+- **`PRODUCT.md`** — full product spec: users, data fields, constraints, principles.
+- **`DESIGN.md`** — visual direction, palette, and type system (pinned to Emme's real brand tokens).
+- **`data/README.md`** — rules for synthetic-only data in this repo.
 
-To learn more about Next.js, take a look at the following resources:
+## Hard constraints
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- No cost estimation — inputs only, never a price.
+- No database, no auth, no server-side file writes — state lives in `localStorage`.
+- Synthetic data only. No real insurance or patient details anywhere in this repo.
