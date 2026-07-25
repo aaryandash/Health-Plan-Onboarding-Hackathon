@@ -78,8 +78,8 @@ function Summary() {
               We don&rsquo;t have anything yet
             </h2>
             <p className="mt-3 max-w-[62ch] leading-relaxed text-muted-foreground">
-              Nothing has been filled in so far. Whenever you&rsquo;re ready,
-              even a few answers are enough to be useful.
+              Nothing filled in yet. Even a few answers are enough to be
+              useful, whenever you&rsquo;re ready.
             </p>
             <Link
               href="/intake"
@@ -114,8 +114,8 @@ function Summary() {
                   Still missing
                 </h2>
                 <p className="mt-3 max-w-[62ch] leading-relaxed text-muted-foreground">
-                  None of these are required. Here&rsquo;s what each one would
-                  have sharpened, so you can decide whether it&rsquo;s worth
+                  None of these are required — here&rsquo;s what each one
+                  would have helped with, so you can decide if it&rsquo;s worth
                   going back for.
                 </p>
                 <ul className="mt-6 divide-y divide-line border-y border-line">
@@ -142,7 +142,7 @@ function Summary() {
                 Everything you told us
               </h2>
               <p className="mt-3 max-w-[62ch] leading-relaxed text-muted-foreground">
-                Anything wrong? Go back and change it — nothing here is locked.
+                Anything wrong? Go back and change it. Nothing is locked in.
               </p>
 
               <div className="mt-6 space-y-8">
@@ -193,8 +193,8 @@ function Summary() {
                 Your data, ready for Emme
               </h2>
               <p className="mt-3 max-w-[62ch] leading-relaxed text-muted-foreground">
-                This is exactly what gets handed to Emme&rsquo;s cost engine.
-                It&rsquo;s yours — take a copy.
+                This is what gets passed along to work out your costs.
+                It&rsquo;s your data, so take a copy.
               </p>
 
               <button

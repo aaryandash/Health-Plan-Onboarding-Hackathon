@@ -9,17 +9,17 @@ const steps = [
   {
     n: "1",
     title: "Upload your paperwork, or don't",
-    body: "Drop in your Summary of Benefits or a recent statement and we'll read the numbers off it. Haven't got them? Type what you know instead — the whole thing works either way.",
+    body: "Upload your Summary of Benefits or a recent statement and we'll pull the numbers off it. Don't have them? Just type what you know. Either way works.",
   },
   {
     n: "2",
     title: "Answer what you can",
-    body: "Short groups of questions, each one explaining why we're asking. Skip anything you don't know. Nothing is required and nothing is a commitment.",
+    body: "A few short questions, and we tell you why we're asking each one. Skip anything you don't know — none of it is required.",
   },
   {
     n: "3",
     title: "See your plan in plain English",
-    body: "We show you what you've paid, what's left, and what your plan actually covers — in words instead of insurance jargon.",
+    body: "What you've paid, what's left, and what your plan covers — in normal words.",
   },
 ];
 
@@ -38,14 +38,14 @@ export default function LandingPage() {
           </p>
 
           <h1 className="mt-12 text-[2.5rem] leading-[1.03] font-bold tracking-tight sm:mt-14 sm:text-[4.5rem] sm:leading-[0.98]">
-            Nobody should need a
-            <span className="text-[#f0a184]"> decoder ring </span>
-            to know what a doctor&rsquo;s visit costs.
+            How much is this
+            <br className="hidden sm:block" /> going to cost me?
           </h1>
 
           <p className="mt-8 max-w-[54ch] text-xl leading-relaxed text-white/85">
-            Emme reads your health plan and tells you what your care actually
-            costs — before you get the bill, in language that makes sense.
+            It&rsquo;s the first thing you want to know, and the hardest thing to
+            find out. Emme reads your health plan and tells you — before the bill
+            shows up.
           </p>
 
           <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -56,7 +56,7 @@ export default function LandingPage() {
               Start form
             </Link>
             <p className="text-[0.9375rem] text-white/70">
-              About two minutes · nothing required
+              Takes about two minutes
             </p>
           </div>
         </div>
@@ -66,12 +66,12 @@ export default function LandingPage() {
       <section className="px-6 py-16 sm:px-10 sm:py-24">
         <div className="mx-auto w-full max-w-3xl">
           <h2 className="font-heading text-[2.25rem] leading-tight font-bold text-navy sm:text-[2.75rem]">
-            Your plan is written for someone else.
+            Insurance paperwork isn&rsquo;t written for you.
           </h2>
           <p className="mt-5 max-w-[62ch] text-lg leading-relaxed text-muted-foreground">
-            Not for you — for the people who process the claim. That&rsquo;s why
-            reading it feels like failing a test you never studied for. Here is
-            a line from a real statement, and what it actually means.
+            It&rsquo;s written for the people processing the claim, which is why
+            it&rsquo;s so hard to read. Here&rsquo;s a line from a statement, and
+            what it&rsquo;s actually saying.
           </p>
 
           <div className="mt-10 grid gap-px overflow-hidden rounded-[var(--radius)] border border-line bg-line sm:grid-cols-2">
@@ -111,11 +111,11 @@ PT RESP              172.40`}
       <section className="border-y border-line bg-white px-6 py-16 sm:px-10 sm:py-24">
         <div className="mx-auto w-full max-w-3xl">
           <h2 className="font-heading text-[2.25rem] leading-tight font-bold text-navy sm:text-[2.75rem]">
-            What we&rsquo;ll ask you for
+            How it works
           </h2>
           <p className="mt-5 max-w-[62ch] text-lg leading-relaxed text-muted-foreground">
-            To work out your costs we need to know how your specific plan splits
-            them with you. That&rsquo;s all these questions are for.
+            Every plan splits costs differently, so we need to know how yours
+            works. That&rsquo;s all the questions are for.
           </p>
 
           <ol className="mt-12 space-y-12">
@@ -152,15 +152,15 @@ PT RESP              172.40`}
             {[
               [
                 "We're not selling you anything.",
-                "Emme doesn't sell insurance. We work out what the plan you already have actually costs you.",
+                "Emme doesn't sell insurance. We just help you understand the plan you already have.",
               ],
               [
                 "Skip anything you can't find.",
-                "Every question can be left blank. We'll tell you what a missing answer would have sharpened, and you can come back to it.",
+                "Leave any question blank. We'll tell you what it would have helped with, and you can come back to it later.",
               ],
               [
                 "Your answers save as you go.",
-                "Close this halfway through and it'll all still be here. No account, no password.",
+                "Close it halfway through and everything will still be here. No account, no password.",
               ],
             ].map(([term, detail]) => (
               <div key={term} className="py-6">
@@ -179,7 +179,7 @@ PT RESP              172.40`}
             Start form
           </Link>
           <p className="mt-5 text-center text-sm text-muted-foreground">
-            You can stop at any point and pick it back up later.
+            Stop whenever you like and pick it up later.
           </p>
         </div>
       </section>

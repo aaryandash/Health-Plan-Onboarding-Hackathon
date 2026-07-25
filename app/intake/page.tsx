@@ -90,9 +90,9 @@ function UploadStep({ onNext }: { onNext: () => void }) {
         Do you have your insurance paperwork handy?
       </h1>
       <p className="mt-4 max-w-[62ch] leading-relaxed text-muted-foreground">
-        If you upload your Summary of Benefits or a recent Explanation of
-        Benefits, we&rsquo;ll read the numbers off it and fill in what we can.
-        You check our work, and you&rsquo;re done much faster.
+        Upload your Summary of Benefits or a recent statement and we&rsquo;ll
+        fill in what we can find. You check it over, and you&rsquo;re done a lot
+        faster.
       </p>
 
       <label className="mt-8 block">
@@ -124,9 +124,9 @@ function UploadStep({ onNext }: { onNext: () => void }) {
 
       <div className="mt-10 border-t border-line pt-8">
         <p className="mb-4 leading-relaxed text-muted-foreground">
-          Don&rsquo;t have them, or can&rsquo;t find them? That&rsquo;s
-          completely normal — most people can answer these from memory or off
-          their insurance card.
+          Can&rsquo;t find them? That&rsquo;s completely normal. Most of this
+          is on your insurance card, and you can skip anything you don&rsquo;t
+          know.
         </p>
         <button type="button" onClick={onNext} className={`${actionClass} w-full`}>
           Skip this and type it in
