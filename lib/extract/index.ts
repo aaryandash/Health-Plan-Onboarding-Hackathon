@@ -1,23 +1,35 @@
 import type { ExtractResult } from "@/lib/types";
-import { stubExtract } from "./stub";
+import { extractHeuristic } from "./heuristic";
+import { extractWithLLM } from "./llm";
+
+export interface ExtractInput {
+  buffer: Buffer;
+  mimeType: string;
+}
 
 /**
- * Extraction entry point. One function, one contract — everything upstream
- * (the API route, the upload step, the store) talks only to this.
- *
- * P2: to land the real parser, implement `parse(buffer, mimeType)` in
- * ./heuristic.ts returning an ExtractResult, then swap the call below. That is
- * the only line that needs to change; the route, the store, and the UI all
- * stay as they are.
+ * Single entry point for document extraction. LLM path runs when
+ * ANTHROPIC_API_KEY is set; otherwise (or if the LLM call fails) falls back
+ * to the heuristic PDF-only path. Never throws — always returns a valid
+ * ExtractResult so the caller can fall through to manual entry.
  */
-export async function extract(
-  buffer: Buffer,
-  mimeType: string,
-): Promise<ExtractResult> {
-  void buffer;
-  void mimeType;
+export async function extract({ buffer, mimeType }: ExtractInput): Promise<ExtractResult> {
+  if (process.env.ANTHROPIC_API_KEY) {
+    try {
+      return await extractWithLLM(buffer, mimeType);
+    } catch {
+      // fall through to heuristic / manual-entry notice below
+    }
+  }
 
-  // TODO(P2): replace with `return parse(buffer, mimeType)` from ./heuristic.
-  // An LLM path goes here too, gated on process.env.ANTHROPIC_API_KEY.
-  return stubExtract();
+  if (mimeType === "application/pdf") {
+    return extractHeuristic(buffer);
+  }
+
+  return {
+    fields: {},
+    confidence: {},
+    source: "heuristic",
+    notice: "We can only automatically read PDF documents right now. You can still fill in your plan details manually below.",
+  };
 }
