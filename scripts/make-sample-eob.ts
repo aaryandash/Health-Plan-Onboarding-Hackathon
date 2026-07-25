@@ -1,121 +1,103 @@
-import { createWriteStream } from "node:fs";
+import { writeFileSync } from "node:fs";
 import path from "node:path";
-import PDFDocument from "pdfkit";
 
 /**
  * Generates the demo fixture: data/sample-eob-synthetic.pdf
  *
- * Why this exists: the BCBS file the brief links to is an *annotated
- * walkthrough* explaining how to read an EOB. It contains no real dollar
- * figures, so extraction against it yields one field and the upload demo
- * falls flat.
+ * Why this exists: the BCBS file the brief links to is an annotated
+ * "how to read your EOB" walkthrough. It contains no dollar figures, so
+ * extraction against it yields one field and the upload demo falls flat.
  *
- * This is a synthetic EOB laid out the way a real one is, with plausible
- * cost-sharing numbers, so the parser has something honest to work on. Every
- * figure is invented — the member, the plan, and the claim do not exist, and
- * the document says so on its face.
+ * This writes a minimal, uncompressed, single-page PDF by hand. pdfkit was
+ * tried first and buries its text in a stream our reader can't reach; a
+ * hand-emitted file keeps the text layer plainly readable, which is the whole
+ * point of a parser fixture.
+ *
+ * Every figure is invented. The member, plan, provider and claim do not exist,
+ * and the document says so on its face.
  *
  * Regenerate with: npx tsx scripts/make-sample-eob.ts
  */
 
 const OUT = path.resolve(process.cwd(), "data/sample-eob-synthetic.pdf");
 
-const NAVY = "#01447e";
-const INK = "#313131";
-const GREY = "#6b625c";
+type Line = { text: string; size?: number; gap?: number };
 
-const doc = new PDFDocument({ size: "LETTER", margin: 54 });
-doc.pipe(createWriteStream(OUT));
+const LINES: Line[] = [
+  { text: "Blue Cross Blue Shield of Michigan", size: 18, gap: 22 },
+  { text: "Explanation of Benefits - This is not a bill", size: 11, gap: 26 },
 
-function rule(y: number) {
-  doc.moveTo(54, y).lineTo(558, y).strokeColor("#d9d2cc").lineWidth(1).stroke();
-}
+  { text: "Member Name: Jordan A. Rivera (SAMPLE)", size: 11, gap: 16 },
+  { text: "Member ID: XJM-000-000-000", size: 11, gap: 16 },
+  { text: "Plan Name: Blue Care Elect Preferred Gold 2500", size: 11, gap: 16 },
+  { text: "Plan Type: PPO", size: 11, gap: 16 },
+  { text: "Statement Date: June 30, 2026", size: 11, gap: 26 },
 
-// Header
-doc.fillColor(NAVY).fontSize(20).font("Helvetica-Bold");
-doc.text("Blue Cross Blue Shield of Michigan");
-doc.moveDown(0.2);
-doc.fillColor(GREY).fontSize(11).font("Helvetica");
-doc.text("Explanation of Benefits — This is not a bill");
-doc.moveDown(0.8);
-rule(doc.y);
-doc.moveDown(0.8);
+  { text: "Your plan year to date", size: 13, gap: 22 },
+  { text: "Individual Deductible: $2,500.00", size: 11, gap: 16 },
+  { text: "Family Deductible: $5,000.00", size: 11, gap: 16 },
+  { text: "Deductible Met YTD: $840.00", size: 11, gap: 16 },
+  { text: "Out-of-Pocket Maximum: $6,000.00", size: 11, gap: 16 },
+  { text: "OOP Met YTD: $1,240.00", size: 11, gap: 16 },
+  { text: "Coinsurance: 20%", size: 11, gap: 16 },
+  { text: "Primary Care Copay: $25.00", size: 11, gap: 16 },
+  { text: "Specialist Copay: $50.00", size: 11, gap: 16 },
+  { text: "Urgent Care Copay: $75.00", size: 11, gap: 16 },
+  { text: "Emergency Room Copay: $250.00", size: 11, gap: 16 },
+  { text: "Monthly Premium: $310.00", size: 11, gap: 26 },
 
-// Member / plan block
-doc.fillColor(INK).fontSize(11).font("Helvetica");
-const lines: [string, string][] = [
-  ["Member Name:", "Jordan A. Rivera (SAMPLE)"],
-  ["Member ID:", "XJM-000-000-000"],
-  ["Plan Name:", "Blue Care Elect Preferred Gold 2500"],
-  ["Plan Type:", "PPO"],
-  ["Statement Date:", "June 30, 2026"],
-  ["Claim Number:", "0000000000"],
+  { text: "This claim", size: 13, gap: 22 },
+  { text: "Provider: Riverside Primary Care Associates", size: 11, gap: 16 },
+  { text: "Service Date: June 12, 2026", size: 11, gap: 16 },
+  { text: "Service: Office visit, established patient", size: 11, gap: 16 },
+  { text: "Amount Billed: $180.00", size: 11, gap: 16 },
+  { text: "Plan Discount: -$47.60", size: 11, gap: 16 },
+  { text: "Amount Applied to Deductible: $107.40", size: 11, gap: 16 },
+  { text: "Patient Responsibility: $132.40", size: 11, gap: 30 },
+
+  { text: "SYNTHETIC SAMPLE DOCUMENT - generated for a hackathon prototype.", size: 8, gap: 12 },
+  { text: "The member, plan, provider, claim and all figures shown are invented.", size: 8, gap: 12 },
+  { text: "This is not a real Explanation of Benefits and contains no real patient data.", size: 8, gap: 12 },
 ];
-for (const [label, value] of lines) {
-  doc.font("Helvetica-Bold").text(label, { continued: true });
-  doc.font("Helvetica").text(`  ${value}`);
+
+/** Escape the characters that are structural inside a PDF string literal. */
+function esc(s: string): string {
+  return s.replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
 }
 
-doc.moveDown(1);
-rule(doc.y);
-doc.moveDown(0.8);
+let y = 740;
+const ops: string[] = ["BT", "/F1 11 Tf", `1 0 0 1 54 ${y} Tm`];
+for (const line of LINES) {
+  ops.push(`/F1 ${line.size ?? 11} Tf`);
+  ops.push(`1 0 0 1 54 ${y} Tm`);
+  ops.push(`(${esc(line.text)}) Tj`);
+  y -= line.gap ?? 16;
+}
+ops.push("ET");
+const content = ops.join("\n");
 
-// Cost sharing — the block the parser actually targets. Label/value proximity
-// matters here; keep the wording close to how carriers really print it.
-doc.fillColor(NAVY).fontSize(13).font("Helvetica-Bold");
-doc.text("Your plan year to date");
-doc.moveDown(0.6);
-doc.fillColor(INK).fontSize(11);
-
-const costs: [string, string][] = [
-  ["Individual Deductible:", "$2,500.00"],
-  ["Family Deductible:", "$5,000.00"],
-  ["Deductible Met YTD:", "$840.00"],
-  ["Out-of-Pocket Maximum:", "$6,000.00"],
-  ["OOP Met YTD:", "$1,240.00"],
-  ["Coinsurance:", "20%"],
-  ["Primary Care Copay:", "$25.00"],
-  ["Specialist Copay:", "$50.00"],
-  ["Urgent Care Copay:", "$75.00"],
-  ["Emergency Room Copay:", "$250.00"],
-  ["Monthly Premium:", "$310.00"],
+// Assemble the file, tracking byte offsets for the xref table.
+const objects: string[] = [
+  "<< /Type /Catalog /Pages 2 0 R >>",
+  "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+  "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>",
+  `<< /Length ${Buffer.byteLength(content, "latin1")} >>\nstream\n${content}\nendstream`,
+  "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>",
 ];
-for (const [label, value] of costs) {
-  doc.font("Helvetica-Bold").text(label, 54, doc.y, { continued: true });
-  doc.font("Helvetica").text(`   ${value}`);
-  doc.moveDown(0.15);
+
+let pdf = "%PDF-1.4\n";
+const offsets: number[] = [];
+objects.forEach((body, idx) => {
+  offsets.push(Buffer.byteLength(pdf, "latin1"));
+  pdf += `${idx + 1} 0 obj\n${body}\nendobj\n`;
+});
+
+const xrefOffset = Buffer.byteLength(pdf, "latin1");
+pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+for (const off of offsets) {
+  pdf += `${String(off).padStart(10, "0")} 00000 n \n`;
 }
+pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF\n`;
 
-doc.moveDown(0.8);
-rule(doc.y);
-doc.moveDown(0.8);
-
-// Claim detail, so the document reads like a real EOB rather than a form.
-doc.fillColor(NAVY).fontSize(13).font("Helvetica-Bold");
-doc.text("This claim");
-doc.moveDown(0.6);
-doc.fillColor(INK).fontSize(11).font("Helvetica");
-doc.text("Provider: Riverside Primary Care Associates");
-doc.text("Service Date: June 12, 2026");
-doc.text("Service: Office visit, established patient");
-doc.moveDown(0.4);
-doc.text("Amount Billed:              $180.00");
-doc.text("Plan Discount:              -$47.60");
-doc.text("Amount Applied to Deductible:  $107.40");
-doc.text("Plan Paid:                    $0.00");
-doc.font("Helvetica-Bold").text("Patient Responsibility:     $132.40");
-
-doc.moveDown(1.5);
-rule(doc.y);
-doc.moveDown(0.6);
-
-doc.fillColor(GREY).fontSize(9).font("Helvetica");
-doc.text(
-  "SYNTHETIC SAMPLE DOCUMENT. Generated for a hackathon prototype. The member, plan, provider, " +
-    "claim and all figures shown are invented. This is not a real Explanation of Benefits and " +
-    "contains no real patient data.",
-  { width: 504 },
-);
-
-doc.end();
-console.log(`wrote ${OUT}`);
+writeFileSync(OUT, Buffer.from(pdf, "latin1"));
+console.log(`wrote ${OUT} (${Buffer.byteLength(pdf, "latin1")} bytes)`);

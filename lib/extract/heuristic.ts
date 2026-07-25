@@ -1,5 +1,6 @@
 import { createRequire } from "node:module";
 import { PDFParse } from "pdf-parse";
+import { pdfToText } from "./pdf-text";
 import type { ExtractResult, IntakeDraft, IntakeKey } from "@/lib/types";
 
 // Turbopack/webpack bundle this route, which breaks pdfjs-dist's default
@@ -226,6 +227,15 @@ export function extractFromText(text: string): { fields: IntakeDraft; confidence
 }
 
 async function pdfTextFromBuffer(buffer: Buffer): Promise<string> {
+  // Our own reader first. pdf-parse works locally but not in the deployed
+  // function: pdfjs-dist touches DOM globals at module evaluation and resolves
+  // its worker by dynamic import, so uploads 500'd in production and then
+  // extracted nothing once shimmed. pdfToText needs only node:zlib.
+  const direct = pdfToText(buffer);
+  if (direct.length > 0) return direct;
+
+  // Fall back to pdf-parse for shapes our reader can't open. If that fails too
+  // the caller falls through to manual entry, which is designed behaviour.
   ensureWorkerConfigured();
   const parser = new PDFParse({ data: buffer });
   try {
