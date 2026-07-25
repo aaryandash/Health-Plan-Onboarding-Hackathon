@@ -1,0 +1,238 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { Question } from "@/components/intake/question";
+import { SECTIONS, visibleFields, visibleSections } from "@/lib/schema";
+import { IntakeProvider, useIntake } from "@/lib/store";
+
+/**
+ * The intake flow. One section per screen — the brief asks for something that
+ * "feels like a smart, reassuring first conversation", and a single dense form
+ * of 35 fields is the opposite of that.
+ *
+ * The upload step is step 0 and is always escapable; see the Core Flow Rule in
+ * AGENTS.md. Both paths stay available: skipping here does not close the door
+ * on uploading later.
+ */
+
+const actionClass =
+  "flex min-h-[3.25rem] items-center justify-center rounded-[var(--radius)] " +
+  "bg-primary px-6 text-[1.0625rem] font-semibold text-primary-foreground " +
+  "transition-colors hover:bg-[#a94d2c]";
+
+function Counter() {
+  const { questionsRemaining, progress } = useIntake();
+  return (
+    <div className="border-b border-line bg-cream/95 px-6 py-4 backdrop-blur sm:px-10">
+      <div className="mx-auto flex w-full max-w-2xl items-baseline justify-between gap-4">
+        <p className="text-[0.9375rem] text-muted-foreground">
+          <span className="font-heading text-2xl font-bold text-navy tabular-nums">
+            {questionsRemaining}
+          </span>{" "}
+          {questionsRemaining === 1 ? "question" : "questions"} left
+        </p>
+        <div
+          className="h-1.5 w-32 overflow-hidden rounded-full bg-line"
+          role="progressbar"
+          aria-valuenow={progress.pct}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label="Progress"
+        >
+          <div
+            className="h-full rounded-full bg-navy transition-[width] duration-500"
+            style={{ width: `${progress.pct}%` }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function UploadStep({ onNext }: { onNext: () => void }) {
+  const { applyExtraction } = useIntake();
+  const [busy, setBusy] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
+
+  async function upload(file: File) {
+    setBusy(true);
+    setNotice(null);
+    try {
+      const body = new FormData();
+      body.append("file", file);
+      const res = await fetch("/api/extract", { method: "POST", body });
+      if (!res.ok) throw new Error(String(res.status));
+      const result = await res.json();
+      applyExtraction(result);
+      setNotice(
+        result.notice ??
+          "Got it — we filled in what we could find. You'll see each one marked so you can check it.",
+      );
+      onNext();
+    } catch {
+      // Extraction failing is a normal path, not an error state. The member
+      // still has the manual route and loses nothing.
+      setNotice(
+        "We couldn't read that one. No problem — you can type the details in instead, it only takes a couple of minutes.",
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="enter-rise">
+      <h1 className="font-heading text-[2.25rem] leading-tight font-bold text-navy">
+        Do you have your insurance paperwork handy?
+      </h1>
+      <p className="mt-4 max-w-[62ch] leading-relaxed text-muted-foreground">
+        If you upload your Summary of Benefits or a recent Explanation of
+        Benefits, we&rsquo;ll read the numbers off it and fill in what we can.
+        You check our work, and you&rsquo;re done much faster.
+      </p>
+
+      <label className="mt-8 block">
+        <span className="sr-only">Upload a document</span>
+        <input
+          type="file"
+          accept="application/pdf,image/*"
+          disabled={busy}
+          className="block w-full cursor-pointer rounded-[var(--radius)] border border-dashed border-navy/40 bg-white p-6 text-base file:mr-4 file:rounded-full file:border-0 file:bg-navy file:px-4 file:py-2 file:text-sm file:font-medium file:text-white"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) void upload(f);
+          }}
+        />
+      </label>
+
+      {busy && (
+        <p className="mt-4 text-[0.9375rem] text-navy">
+          Reading your document…
+        </p>
+      )}
+      {notice && (
+        <p className="mt-4 max-w-[62ch] border-l-2 border-navy pl-4 text-[0.9375rem] leading-relaxed text-ink">
+          {notice}
+        </p>
+      )}
+
+      <div className="mt-10 border-t border-line pt-8">
+        <p className="mb-4 leading-relaxed text-muted-foreground">
+          Don&rsquo;t have them, or can&rsquo;t find them? That&rsquo;s
+          completely normal — most people can answer these from memory or off
+          their insurance card.
+        </p>
+        <button type="button" onClick={onNext} className={`${actionClass} w-full`}>
+          Skip this and type it in
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function Flow() {
+  const { draft, hydrated, resumed, reset } = useIntake();
+  const [step, setStep] = useState(0);
+
+  const sections = visibleSections(draft);
+  const total = sections.length + 1; // upload step is step 0
+  const section = step > 0 ? sections[step - 1] : null;
+
+  if (!hydrated) {
+    return (
+      <div className="px-6 py-16 text-muted-foreground sm:px-10">Loading…</div>
+    );
+  }
+
+  const done = step > sections.length;
+
+  return (
+    <>
+      {step > 0 && <Counter />}
+
+      <main className="flex-1 px-6 py-10 sm:px-10 sm:py-14">
+        <div className="mx-auto w-full max-w-2xl">
+          {resumed && step === 0 && (
+            <p className="mb-8 rounded-[var(--radius)] bg-white px-4 py-3 text-[0.9375rem] leading-relaxed text-ink">
+              Welcome back — we kept everything you filled in last time.{" "}
+              <button
+                type="button"
+                onClick={reset}
+                className="font-medium text-navy underline underline-offset-4"
+              >
+                Start over
+              </button>
+            </p>
+          )}
+
+          {step === 0 && <UploadStep onNext={() => setStep(1)} />}
+
+          {section && (
+            <div key={section.id}>
+              <h1 className="font-heading text-[2.25rem] leading-tight font-bold text-navy">
+                {section.title}
+              </h1>
+              <p className="mt-3 max-w-[62ch] leading-relaxed text-muted-foreground">
+                {section.blurb}
+              </p>
+
+              <div className="mt-4 divide-y divide-line">
+                {visibleFields(section, draft).map((f) => (
+                  <Question key={f.key} field={f} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {done && (
+            <div className="enter-rise">
+              <h1 className="font-heading text-[2.25rem] leading-tight font-bold text-navy">
+                That&rsquo;s everything.
+              </h1>
+              <p className="mt-4 leading-relaxed text-muted-foreground">
+                Next up: your summary screen.
+              </p>
+              <Link href="/summary" className={`${actionClass} mt-8 w-full`}>
+                See what we know about your plan
+              </Link>
+            </div>
+          )}
+
+          {step > 0 && !done && (
+            <div className="mt-10 flex items-center gap-6 border-t border-line pt-8">
+              <button
+                type="button"
+                onClick={() => setStep((s) => s - 1)}
+                className="text-[0.9375rem] font-medium text-navy underline underline-offset-4"
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                onClick={() => setStep((s) => s + 1)}
+                className={`${actionClass} flex-1`}
+              >
+                {step === sections.length ? "Finish" : "Next"}
+              </button>
+            </div>
+          )}
+
+          {step > 0 && !done && (
+            <p className="mt-5 text-center text-sm text-muted-foreground">
+              Step {step} of {total - 1} · your answers save automatically
+            </p>
+          )}
+        </div>
+      </main>
+    </>
+  );
+}
+
+export default function IntakePage() {
+  return (
+    <IntakeProvider>
+      <Flow />
+    </IntakeProvider>
+  );
+}
