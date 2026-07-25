@@ -12,9 +12,7 @@
   --font-heading: var(--font-zain);
   --color-navy: var(--emme-navy);
   --color-navy-soft: var(--emme-navy-soft);
-  --color-navy-deep: var(--emme-navy-deep);
-  --color-navy-tint: var(--emme-navy-tint);
-  --color-sky: var(--emme-sky);
+  --color-terracotta: var(--emme-terracotta);
   --color-cream: var(--emme-cream);
   --color-ink: var(--emme-ink);
   --color-line: var(--emme-line);
@@ -60,11 +58,11 @@
 :root {
   --emme-navy: #01447e;
   --emme-navy-soft: #1b5c95;
-  /* Navy carries the whole surface. Emme's own site is navy-led, and a second
-     warm accent fought it more than it helped. */
-  --emme-navy-deep: #013a6b;
-  --emme-navy-tint: #e6eff7;
-  --emme-sky: #9dc9f0;
+  --emme-terracotta: #e37753;
+  /* Action fills only. #e37753 under white text is ~3.2:1 — fine for large
+     text, short of AA for a 16px button label. This deeper cut clears 4.5:1
+     while staying unmistakably the same brand colour. */
+  --emme-terracotta-deep: #c05a34;
   --emme-cream: #fff8f4;
   --emme-ink: #313131;
   --emme-grey: #b2b2be;
@@ -76,7 +74,7 @@
   --card-foreground: var(--emme-ink);
   --popover: #ffffff;
   --popover-foreground: var(--emme-ink);
-  --primary: var(--emme-navy);
+  --primary: var(--emme-terracotta-deep);
   --primary-foreground: #ffffff;
   --secondary: #ffffff;
   --secondary-foreground: var(--emme-navy);
@@ -90,7 +88,7 @@
   --input: var(--emme-line);
   --ring: var(--emme-navy);
   --chart-1: var(--emme-navy);
-  --chart-2: var(--emme-navy-soft);
+  --chart-2: var(--emme-terracotta);
   --chart-3: var(--emme-navy-soft);
   --chart-4: #8aa9c4;
   --chart-5: var(--emme-grey);
