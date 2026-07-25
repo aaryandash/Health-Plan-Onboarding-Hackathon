@@ -7,9 +7,15 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-sans: var(--font-poppins);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-heading: var(--font-zain);
+  --color-navy: var(--emme-navy);
+  --color-navy-soft: var(--emme-navy-soft);
+  --color-terracotta: var(--emme-terracotta);
+  --color-cream: var(--emme-cream);
+  --color-ink: var(--emme-ink);
+  --color-line: var(--emme-line);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -48,31 +54,49 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/*
+ * Emme brand tokens, extracted from emme.com's live CSS custom properties
+ * (--accent, --contrast-2, --contrast-3, .site-header background). These are
+ * the client's real values, not an interpretation. See DESIGN.md.
+ */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
+  --emme-navy: #01447e;
+  --emme-navy-soft: #1b5c95;
+  --emme-terracotta: #e37753;
+  /* Action fills only. #e37753 under white text is ~3.2:1 — fine for large
+     text, short of AA for a 16px button label. This deeper cut clears 4.5:1
+     while staying unmistakably the same brand colour. */
+  --emme-terracotta-deep: #c05a34;
+  --emme-cream: #fff8f4;
+  --emme-ink: #313131;
+  --emme-grey: #b2b2be;
+  --emme-line: #e8ddd6;
+
+  --background: var(--emme-cream);
+  --foreground: var(--emme-ink);
+  --card: #ffffff;
+  --card-foreground: var(--emme-ink);
+  --popover: #ffffff;
+  --popover-foreground: var(--emme-ink);
+  --primary: var(--emme-terracotta-deep);
+  --primary-foreground: #ffffff;
+  --secondary: #ffffff;
+  --secondary-foreground: var(--emme-navy);
+  --muted: #f6ece5;
+  /* Tinted from the ground, not gray — 4.6:1 on cream. */
+  --muted-foreground: #6b625c;
+  --accent: var(--emme-navy);
+  --accent-foreground: #ffffff;
+  --destructive: #b3261e;
+  --border: var(--emme-line);
+  --input: var(--emme-line);
+  --ring: var(--emme-navy);
+  --chart-1: var(--emme-navy);
+  --chart-2: var(--emme-terracotta);
+  --chart-3: var(--emme-navy-soft);
+  --chart-4: #8aa9c4;
+  --chart-5: var(--emme-grey);
+  --radius: 0.875rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -126,5 +150,55 @@
   }
   html {
     @apply font-sans;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-zain), system-ui, sans-serif;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  /* 16px floor stops iOS zooming the viewport when a field takes focus. */
+  input,
+  select,
+  textarea,
+  button {
+    font-size: max(1rem, 16px);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--emme-navy);
+    outline-offset: 2px;
+  }
+}
+
+/*
+ * The one authored motion (DESIGN.md): a question group arriving.
+ * Exponential ease-out from an already-visible default, so content is never
+ * hidden if the animation never runs.
+ */
+@layer utilities {
+  .enter-rise {
+    animation: enter-rise 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes enter-rise {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .enter-rise {
+      animation: none;
+    }
   }
 }
