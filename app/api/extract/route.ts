@@ -1,4 +1,5 @@
-import { extract } from "@/lib/extract";
+// Must come before anything that reaches pdfjs-dist. See the file for why.
+import "@/lib/extract/polyfill";
 import type { ExtractResult } from "@/lib/types";
 
 // pdf-parse / pdfjs-dist need Node APIs, not the edge runtime.
@@ -41,6 +42,11 @@ export async function POST(request: Request) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
+    // Imported here, not at the top: if the pdfjs module graph fails to load
+    // for any reason, that failure lands in this try block instead of killing
+    // the whole route at module evaluation (which is what returned 500s
+    // before). The member falls through to manual entry either way.
+    const { extract } = await import("@/lib/extract");
     const result = await extract({ buffer, mimeType: file.type });
     return Response.json(result);
   } catch {
