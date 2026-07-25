@@ -1,97 +1,211 @@
 import Link from "next/link";
 
 /**
- * Welcome — the first viewport of the direction contract in DESIGN.md.
+ * Landing page. Mode: Persuade.
  *
- * Its whole job is to answer "why are you about to ask me all this?" before a
- * single question appears, and to make clear that nothing here is mandatory.
- * The client brief is explicit that members arrive with "anxiety and learned
- * helplessness"; this screen is where that gets defused or made worse.
+ * A member arrives here knowing nothing. Before they will answer 35 questions
+ * about their money and their health, they need three things: what Emme is,
+ * why their plan is confusing in the first place (so the confusion feels
+ * normal rather than like their own failure), and what they get back.
+ *
+ * The centrepiece is a real EOB fragment beside its plain-English translation.
+ * It demonstrates the mechanism instead of claiming it — you can read the
+ * before and after in three seconds. The figures are synthetic.
  */
 
-const reassurances = [
+const steps = [
   {
-    lead: "It takes about two minutes.",
-    detail:
-      "Seven short groups of questions. If you have your insurance paperwork handy, it's closer to one.",
+    n: "1",
+    title: "Upload your paperwork, or don't",
+    body: "Drop in your Summary of Benefits or a recent statement and we'll read the numbers off it. Haven't got them? Type what you know instead — the whole thing works either way.",
   },
   {
-    lead: "Skip anything you can't find.",
-    detail:
-      "Every question can be left blank. We'll tell you what a missing answer would have sharpened, and you can come back to it whenever.",
+    n: "2",
+    title: "Answer what you can",
+    body: "Short groups of questions, each one explaining why we're asking. Skip anything you don't know. Nothing is required and nothing is a commitment.",
   },
   {
-    lead: "Your answers save as you go.",
-    detail:
-      "Close this halfway through and everything will still be here. No account, no password.",
-  },
-  {
-    lead: "We're not selling you a plan.",
-    detail:
-      "Emme doesn't sell insurance. We work out what your existing plan actually costs you, so nothing here is a commitment.",
+    n: "3",
+    title: "See your plan in plain English",
+    body: "We show you what you've paid, what's left, and what your plan actually covers — in words instead of insurance jargon.",
   },
 ];
 
-export default function WelcomePage() {
+export default function LandingPage() {
   return (
-    <main className="flex flex-1 flex-col">
-      <section className="bg-navy px-6 pt-10 pb-14 text-white sm:px-10 sm:pt-14 sm:pb-20">
-        <div className="mx-auto w-full max-w-2xl">
+    <main className="flex-1">
+      {/* Hero */}
+      <section className="relative overflow-hidden bg-navy text-white">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-32 -right-24 h-[28rem] w-[28rem] rounded-full bg-white/5 blur-3xl"
+        />
+        <div className="relative mx-auto w-full max-w-3xl px-6 pt-10 pb-16 sm:px-10 sm:pt-14 sm:pb-24">
           <p className="font-heading text-3xl font-extrabold lowercase tracking-tight">
             emme
           </p>
 
-          <h1 className="mt-10 max-w-[16ch] text-[2.75rem] leading-[1.05] font-bold sm:text-6xl">
-            Let&rsquo;s figure out what your care actually costs.
+          <h1 className="mt-14 text-[3rem] leading-[0.98] font-bold tracking-tight sm:text-[4.5rem]">
+            Nobody should need a
+            <span className="text-[#f0a184]"> decoder ring </span>
+            to know what a doctor&rsquo;s visit costs.
           </h1>
 
-          <p className="mt-6 max-w-[60ch] text-lg leading-relaxed text-white/85">
-            Health plans split costs with you in ways that are genuinely hard to
-            read. To tell you what a visit, a prescription, or a procedure will
-            cost <em className="font-medium text-white not-italic">you</em>, we
-            need to know how your specific plan works.
+          <p className="mt-8 max-w-[54ch] text-xl leading-relaxed text-white/85">
+            Emme reads your health plan and tells you what your care actually
+            costs — before you get the bill, in language that makes sense.
           </p>
 
-          <p className="mt-4 max-w-[60ch] text-lg leading-relaxed text-white/85">
-            That&rsquo;s all the next few questions are for. Every one of them
-            comes with a plain explanation of why we&rsquo;re asking.
-          </p>
-        </div>
-      </section>
-
-      <section className="flex-1 px-6 py-12 sm:px-10 sm:py-16">
-        <div className="mx-auto w-full max-w-2xl">
-          <h2 className="font-heading text-2xl font-bold text-navy">
-            Before we start
-          </h2>
-
-          <ul className="mt-8 divide-y divide-line border-y border-line">
-            {reassurances.map((item) => (
-              <li key={item.lead} className="py-6">
-                <p className="text-lg font-medium text-ink">{item.lead}</p>
-                <p className="mt-2 max-w-[62ch] leading-relaxed text-muted-foreground">
-                  {item.detail}
-                </p>
-              </li>
-            ))}
-          </ul>
-
-          <div className="mt-10">
+          <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
             <Link
               href="/intake"
-              className="flex min-h-[3.25rem] w-full items-center justify-center rounded-[var(--radius)] bg-primary px-6 text-[1.0625rem] font-semibold text-primary-foreground transition-colors hover:bg-[#a94d2c]"
+              className="flex min-h-[3.5rem] items-center justify-center rounded-[var(--radius)] bg-primary px-8 text-[1.0625rem] font-semibold text-primary-foreground transition-colors hover:bg-[#a94d2c]"
             >
-              Get started
+              Start form
             </Link>
-
-            <p className="mt-5 text-center text-sm leading-relaxed text-muted-foreground">
-              You&rsquo;ll have the option to upload your insurance documents and
-              let us fill things in — or to skip that entirely and type what you
-              know.
+            <p className="text-[0.9375rem] text-white/70">
+              About two minutes · nothing required
             </p>
           </div>
         </div>
       </section>
+
+      {/* The problem, demonstrated rather than asserted */}
+      <section className="px-6 py-16 sm:px-10 sm:py-24">
+        <div className="mx-auto w-full max-w-3xl">
+          <h2 className="font-heading text-[2.25rem] leading-tight font-bold text-navy sm:text-[2.75rem]">
+            Your plan is written for someone else.
+          </h2>
+          <p className="mt-5 max-w-[62ch] text-lg leading-relaxed text-muted-foreground">
+            Not for you — for the people who process the claim. That&rsquo;s why
+            reading it feels like failing a test you never studied for. Here is
+            a line from a real statement, and what it actually means.
+          </p>
+
+          <div className="mt-10 grid gap-px overflow-hidden rounded-[var(--radius)] border border-line bg-line sm:grid-cols-2">
+            <div className="bg-white p-6 sm:p-8">
+              <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                What your statement says
+              </p>
+              <p className="mt-5 font-mono text-[0.9375rem] leading-loose text-ink">
+                AMT APPLIED TO DED&nbsp;&nbsp;840.00
+                <br />
+                COINS&nbsp;&nbsp;20%
+                <br />
+                OOP ACCUM YTD&nbsp;&nbsp;1,240.00
+                <br />
+                PT RESP&nbsp;&nbsp;172.40
+              </p>
+              <p className="mt-5 text-xs text-muted-foreground">
+                Synthetic example
+              </p>
+            </div>
+
+            <div className="bg-navy p-6 text-white sm:p-8">
+              <p className="text-xs font-semibold tracking-wide text-white/60 uppercase">
+                What it means
+              </p>
+              <p className="mt-5 text-[1.0625rem] leading-relaxed">
+                You&rsquo;ve paid <strong className="font-semibold">$840</strong>{" "}
+                toward your deductible. Once you hit it, your plan picks up{" "}
+                <strong className="font-semibold">80%</strong> of what comes
+                next. You&rsquo;re{" "}
+                <strong className="font-semibold">$1,240</strong> into the{" "}
+                <em className="not-italic">most</em> you&rsquo;ll pay this year.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* What happens next */}
+      <section className="border-y border-line bg-white px-6 py-16 sm:px-10 sm:py-24">
+        <div className="mx-auto w-full max-w-3xl">
+          <h2 className="font-heading text-[2.25rem] leading-tight font-bold text-navy sm:text-[2.75rem]">
+            What we&rsquo;ll ask you for
+          </h2>
+          <p className="mt-5 max-w-[62ch] text-lg leading-relaxed text-muted-foreground">
+            To work out your costs we need to know how your specific plan splits
+            them with you. That&rsquo;s all these questions are for.
+          </p>
+
+          <ol className="mt-12 space-y-12">
+            {steps.map((step) => (
+              <li key={step.n} className="flex gap-6 sm:gap-8">
+                <span
+                  aria-hidden
+                  className="font-heading shrink-0 text-[2.5rem] leading-none font-bold text-[#e37753] tabular-nums"
+                >
+                  {step.n}
+                </span>
+                <div>
+                  <h3 className="font-heading text-xl font-bold text-ink">
+                    {step.title}
+                  </h3>
+                  <p className="mt-2 max-w-[58ch] leading-relaxed text-muted-foreground">
+                    {step.body}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* Reassurance + close */}
+      <section className="px-6 py-16 sm:px-10 sm:py-24">
+        <div className="mx-auto w-full max-w-3xl">
+          <h2 className="font-heading text-[2.25rem] leading-tight font-bold text-navy sm:text-[2.75rem]">
+            Before you start
+          </h2>
+
+          <dl className="mt-10 divide-y divide-line border-y border-line">
+            {[
+              [
+                "We're not selling you anything.",
+                "Emme doesn't sell insurance. We work out what the plan you already have actually costs you.",
+              ],
+              [
+                "Skip anything you can't find.",
+                "Every question can be left blank. We'll tell you what a missing answer would have sharpened, and you can come back to it.",
+              ],
+              [
+                "Your answers save as you go.",
+                "Close this halfway through and it'll all still be here. No account, no password.",
+              ],
+            ].map(([term, detail]) => (
+              <div key={term} className="py-6">
+                <dt className="text-lg font-medium text-ink">{term}</dt>
+                <dd className="mt-2 max-w-[62ch] leading-relaxed text-muted-foreground">
+                  {detail}
+                </dd>
+              </div>
+            ))}
+          </dl>
+
+          <Link
+            href="/intake"
+            className="mt-12 flex min-h-[3.5rem] w-full items-center justify-center rounded-[var(--radius)] bg-primary px-8 text-[1.0625rem] font-semibold text-primary-foreground transition-colors hover:bg-[#a94d2c]"
+          >
+            Start form
+          </Link>
+          <p className="mt-5 text-center text-sm text-muted-foreground">
+            You can stop at any point and pick it back up later.
+          </p>
+        </div>
+      </section>
+
+      <footer className="bg-navy px-6 py-10 text-white/70 sm:px-10">
+        <div className="mx-auto w-full max-w-3xl">
+          <p className="font-heading text-2xl font-extrabold lowercase text-white">
+            emme
+          </p>
+          <p className="mt-3 max-w-[60ch] text-sm leading-relaxed">
+            Built for the TOA Health Hack. All figures shown are synthetic — no
+            real member data appears anywhere in this prototype.
+          </p>
+        </div>
+      </footer>
     </main>
   );
 }
