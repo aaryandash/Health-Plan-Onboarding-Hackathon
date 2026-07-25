@@ -6,15 +6,8 @@ import { Question } from "@/components/intake/question";
 import { visibleFields, visibleSections } from "@/lib/schema";
 import { IntakeProvider, useIntake } from "@/lib/store";
 
-/**
- * The intake flow. One section per screen — the brief asks for something that
- * "feels like a smart, reassuring first conversation", and a single dense form
- * of 35 fields is the opposite of that.
- *
- * The upload step is step 0 and is always escapable; see the Core Flow Rule in
- * AGENTS.md. Both paths stay available: skipping here does not close the door
- * on uploading later.
- */
+// The intake flow, one section per screen. Upload is step 0 and always
+// skippable; skipping it doesn't close the door on uploading later.
 
 const actionClass =
   "flex min-h-[3.25rem] items-center justify-center rounded-[var(--radius)] " +

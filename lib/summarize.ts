@@ -1,19 +1,8 @@
 import { FIELD_BY_KEY, SECTIONS, visibleFields, visibleSections } from "./schema";
 import type { IntakeDraft, IntakeKey } from "./types";
 
-/**
- * Turns a member's answers into plain-English sentences about their own plan.
- *
- * IMPORTANT — this never estimates the cost of care. Cost calculation is
- * Emme's engine, downstream of this flow, and is explicitly out of scope
- * (see PRODUCT.md). Everything here restates numbers the member already gave
- * us, in language they can actually read. "You've met $840 of your $2,500
- * deductible" is their own data explained back. "This MRI will cost you $312"
- * would be a projection, and is not ours to make.
- *
- * Most members have never had their plan explained to them in these terms.
- * That is the point of the screen.
- */
+// Turns answers into plain-English sentences about the member's own plan.
+// Restates their numbers only — no cost projection, that's Emme's engine.
 
 export function money(n: number): string {
   return n.toLocaleString("en-US", {

@@ -27,11 +27,12 @@ Open [http://localhost:3000](http://localhost:3000).
 
 Other commands: `npm run build`, `npm run lint`.
 
-## Project docs
+## Layout
 
-- **`AGENTS.md`** — team lanes, working rules, hard constraints (read this before touching any code).
-- **`PRODUCT.md`** — full product spec: users, data fields, constraints, principles.
-- **`DESIGN.md`** — visual direction, palette, and type system (pinned to Emme's real brand tokens).
+- **`lib/schema.ts`** — every question, its type, and the plain-language reason we ask it. Drives the form, the summary and the export.
+- **`lib/store.tsx`** — answers, autosave, and where each value came from.
+- **`lib/extract/`** — PDF text extraction and field matching.
+- **`lib/summarize.ts`** — turns answers into plain-English sentences about the plan.
 - **`data/README.md`** — rules for synthetic-only data in this repo.
 
 ## Hard constraints

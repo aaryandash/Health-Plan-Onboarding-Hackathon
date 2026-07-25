@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local working notes / editor + tooling config
+.claude/
+CLAUDE.md
+AGENTS.md
+PRODUCT.md
+DESIGN.md
+SETUP.md
+.impeccable/

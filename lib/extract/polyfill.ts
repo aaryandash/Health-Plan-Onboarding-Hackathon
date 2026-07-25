@@ -1,18 +1,7 @@
-/**
- * Minimal DOM shims for pdfjs-dist under Node.
- *
- * pdfjs-dist's legacy build references DOMMatrix, Path2D and ImageData at
- * module evaluation. Node has none of them, so importing it throws
- * "ReferenceError: DOMMatrix is not defined" before any of our code runs —
- * which is why the route's try/catch never fired and uploads returned 500.
- *
- * The real answer is @napi-rs/canvas, but that is a native binary we do not
- * need: we only pull the text layer, never rasterise a page. These stubs exist
- * purely to get module evaluation past the reference. If anything ever
- * actually renders, it will produce nothing rather than crash.
- *
- * Import this before anything that reaches pdfjs-dist.
- */
+// Minimal DOM shims for pdfjs-dist under Node, which references DOMMatrix,
+// Path2D and ImageData at module load. @napi-rs/canvas would provide them for
+// real, but we only read text and never rasterise, so stubs are enough.
+// Import before anything that reaches pdfjs-dist.
 
 type Mutable = Record<string, unknown>;
 const g = globalThis as unknown as Mutable;

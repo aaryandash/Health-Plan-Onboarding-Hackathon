@@ -1,17 +1,9 @@
 import Link from "next/link";
 
-/**
- * Landing page. Mode: Persuade.
- *
- * A member arrives here knowing nothing. Before they will answer 35 questions
- * about their money and their health, they need three things: what Emme is,
- * why their plan is confusing in the first place (so the confusion feels
- * normal rather than like their own failure), and what they get back.
- *
- * The centrepiece is a real EOB fragment beside its plain-English translation.
- * It demonstrates the mechanism instead of claiming it — you can read the
- * before and after in three seconds. The figures are synthetic.
- */
+// Landing page. Before anyone answers 35 questions about their money and their
+// health they need to know what Emme is, why their plan is confusing, and what
+// they get back. The EOB fragment and its translation show that in one glance.
+// Figures are synthetic.
 
 const steps = [
   {

@@ -1,18 +1,8 @@
 import type { IntakeDraft, IntakeKey, PlanIntake } from "./types";
 
-/**
- * THE SINGLE SOURCE OF TRUTH.
- *
- * The form UI, tooltips, extraction target, confirmation screen, and JSON
- * export are all derived from `SECTIONS`. Add a field here and it appears
- * everywhere. Never hardcode a field name in a component.
- *
- * Copy rules (from the client brief, binding):
- *   - `why` is written to the member, not about them. One plain sentence.
- *   - Explain jargon BEFORE using it. "YTD Deductible Met" is meaningless to
- *     most people; "how much you've already paid toward your deductible" isn't.
- *   - Never imply a question is mandatory when it isn't.
- */
+// Every question lives here. The form, tooltips, summary and JSON export are
+// all built from SECTIONS, so don't hardcode a field name in a component.
+// `why` is written to the member: one plain sentence, jargon explained first.
 
 export type FieldType =
   | "text"

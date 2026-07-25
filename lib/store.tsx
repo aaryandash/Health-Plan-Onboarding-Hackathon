@@ -24,18 +24,9 @@ import type {
   PlanIntake,
 } from "./types";
 
-/**
- * Intake state: the member's answers, where each one came from, and automatic
- * persistence.
- *
- * Auto-save is a graded requirement — partial progress must survive the member
- * closing the tab. It lives in localStorage because there is no account system
- * and the deploy target has an ephemeral filesystem.
- *
- * Provenance is tracked per field because the UI has to be honest about it:
- * a value we pulled off a document or worked out ourselves must be visibly
- * marked as such, and must stay editable (Product Principle 5).
- */
+// Answers, autosave, and where each value came from.
+// localStorage because there's no account system. Provenance is per-field so
+// the UI can mark extracted/inferred values and keep them editable.
 
 const STORAGE_KEY = "emme:intake:v1";
 const SAVE_DEBOUNCE_MS = 400;

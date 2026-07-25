@@ -1,23 +1,13 @@
 import { writeFileSync } from "node:fs";
 import path from "node:path";
 
-/**
- * Generates the demo fixture: data/sample-eob-synthetic.pdf
- *
- * Why this exists: the BCBS file the brief links to is an annotated
- * "how to read your EOB" walkthrough. It contains no dollar figures, so
- * extraction against it yields one field and the upload demo falls flat.
- *
- * This writes a minimal, uncompressed, single-page PDF by hand. pdfkit was
- * tried first and buries its text in a stream our reader can't reach; a
- * hand-emitted file keeps the text layer plainly readable, which is the whole
- * point of a parser fixture.
- *
- * Every figure is invented. The member, plan, provider and claim do not exist,
- * and the document says so on its face.
- *
- * Regenerate with: npx tsx scripts/make-sample-eob.ts
- */
+// Generates data/sample-eob-synthetic.pdf — a test EOB for the parser.
+// The public BCBS sample is a "how to read your EOB" explainer with no actual
+// dollar figures, so it's useless as a fixture. Written by hand rather than
+// with pdfkit, which buries the text where our reader can't get at it.
+// All figures are invented; the document says so on its face.
+//
+// Regenerate: npx tsx scripts/make-sample-eob.ts
 
 const OUT = path.resolve(process.cwd(), "data/sample-eob-synthetic.pdf");
 

@@ -11,17 +11,8 @@ import {
   planInsights,
 } from "@/lib/summarize";
 
-/**
- * The confirmation screen.
- *
- * The brief singles this out: "a 'Here's what we know about your plan' summary
- * screen rather than a generic thank-you page." So the whole screen is built
- * around explaining the member's plan back to them in language they can read —
- * most people have never had that done for them.
- *
- * It restates their own numbers. It never projects the cost of care; that is
- * Emme's engine, downstream, and out of scope here.
- */
+// Confirmation screen: explains the member's plan back to them in plain
+// English rather than thanking them for submitting. Their own numbers only.
 
 const actionClass =
   "flex min-h-[3.25rem] items-center justify-center rounded-[var(--radius)] " +

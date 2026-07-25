@@ -1,23 +1,16 @@
 import { inflateSync, unzipSync } from "node:zlib";
 
-/**
- * Pulls the text layer out of a PDF with nothing but node:zlib.
- *
- * Why not pdf-parse: it depends on pdfjs-dist, which references DOM globals at
- * module evaluation and resolves a worker by dynamic import. Neither survives
- * bundling for a serverless function — we got a 500 before the handler ran,
- * then 0 fields once shimmed. Rather than keep fighting it under a deadline,
- * this does the one job we actually need.
- *
- * How it works: a PDF's page content lives in `stream ... endstream` blocks,
- * usually Flate-compressed. Inside, text is drawn by `(literal) Tj` and
- * `[(kerned) -120 (runs)] TJ` operators. We inflate every stream, pull the
- * string literals out of those operators, and stitch them back together.
- *
- * Scope: text-layer PDFs only. A scanned photo of a document has no text layer
- * and yields nothing — the caller falls through to manual entry, which is the
- * designed behaviour, not a failure.
- */
+// Pulls the text layer out of a PDF using only node:zlib.
+//
+// Page content lives in `stream ... endstream` blocks, usually Flate-compressed.
+// Text is drawn by `(literal) Tj` and `[(kerned) -120 (runs)] TJ` operators, so
+// we inflate each stream and pull the string literals back out.
+//
+// Text-layer PDFs only. A scan has no text layer and yields nothing, which the
+// caller handles by falling through to manual entry.
+//
+// (pdf-parse would do this, but its pdfjs dependency needs DOM globals that
+// don't exist in a serverless function.)
 
 /** Decode a PDF string literal, resolving escapes and octal codes. */
 function decodeLiteral(raw: string): string {

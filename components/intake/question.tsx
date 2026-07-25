@@ -5,12 +5,8 @@ import type { Field } from "@/lib/schema";
 import { useIntake } from "@/lib/store";
 import type { IntakeKey, PlanIntake } from "@/lib/types";
 
-/**
- * One question. The `why` copy sits directly under the label, always visible —
- * not behind a "?" icon. On a phone there is no hover, and the brief requires
- * inline jargon-free explanation, so hiding it behind a tap would fail the
- * requirement and the member both.
- */
+// One question. The `why` copy sits under the label, always visible — there's
+// no hover on a phone, so hiding it behind an icon helps nobody.
 
 const inputClass =
   "w-full min-h-[3.25rem] rounded-[var(--radius)] border border-line bg-white px-4 text-base text-ink " +
@@ -24,17 +20,12 @@ const selectClass =
   `${inputClass} appearance-none bg-[length:1.25rem] bg-[right_1rem_center] bg-no-repeat pr-11 ` +
   `bg-[url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20fill%3D%27none%27%20viewBox%3D%270%200%2024%2024%27%20stroke%3D%27%2301447e%27%20stroke-width%3D%272%27%3E%3Cpath%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%20d%3D%27M6%209l6%206%206-6%27%2F%3E%3C%2Fsvg%3E")]`;
 
-// 44px minimum tap target (DESIGN.md). Negative margin keeps the visual
-// rhythm while the hit area grows.
+// 44px tap target. Negative margin keeps the spacing while the hit area grows.
 const inlineActionClass =
   "min-h-[44px] -my-2 py-2 text-[0.9375rem] font-medium text-navy underline underline-offset-4";
 
-/**
- * Validation runs on blur, never while typing — correcting someone mid-word is
- * exactly the scolding tone the brief warns against. Messages name the problem
- * and the fix, and nothing here blocks progress: a field can still be skipped
- * or left wrong, because the member is always in control (Product Principle 5).
- */
+// Runs on blur, not while typing. Nothing here blocks progress — a field can
+// still be skipped or left wrong.
 function validate(field: Field, value: unknown): string | null {
   if (value === undefined || value === "") return null;
 
