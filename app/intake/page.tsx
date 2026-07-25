@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Question } from "@/components/intake/question";
-import { SECTIONS, visibleFields, visibleSections } from "@/lib/schema";
+import { visibleFields, visibleSections } from "@/lib/schema";
 import { IntakeProvider, useIntake } from "@/lib/store";
 
 /**
@@ -22,7 +22,7 @@ const actionClass =
   "transition-colors hover:bg-[#a94d2c]";
 
 function Counter() {
-  const { questionsRemaining, progress } = useIntake();
+  const { questionsRemaining, progress, saveState } = useIntake();
   return (
     <div className="sticky top-0 z-20 border-b border-line bg-cream/95 px-6 py-4 backdrop-blur-sm sm:px-10">
       <div className="mx-auto flex w-full max-w-2xl items-baseline justify-between gap-4">
@@ -32,18 +32,28 @@ function Counter() {
           </span>{" "}
           {questionsRemaining === 1 ? "question" : "questions"} left
         </p>
-        <div
-          className="h-1.5 w-32 overflow-hidden rounded-full bg-line"
-          role="progressbar"
-          aria-valuenow={progress.pct}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-label="Progress"
-        >
+        <div className="flex items-center gap-3">
+          <span
+            aria-live="polite"
+            className={`text-sm text-muted-foreground transition-opacity duration-300 ${
+              saveState === "saved" ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            Saved
+          </span>
           <div
-            className="h-full rounded-full bg-navy transition-[width] duration-500"
-            style={{ width: `${progress.pct}%` }}
-          />
+            className="h-1.5 w-24 overflow-hidden rounded-full bg-line sm:w-32"
+            role="progressbar"
+            aria-valuenow={progress.pct}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label="Progress"
+          >
+            <div
+              className="h-full rounded-full bg-navy transition-[width] duration-500"
+              style={{ width: `${progress.pct}%` }}
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -106,16 +116,18 @@ function UploadStep({ onNext }: { onNext: () => void }) {
         />
       </label>
 
-      {busy && (
-        <p className="mt-4 text-[0.9375rem] text-navy">
-          Reading your document…
-        </p>
-      )}
-      {notice && (
-        <p className="mt-4 max-w-[62ch] border-l-2 border-navy pl-4 text-[0.9375rem] leading-relaxed text-ink">
-          {notice}
-        </p>
-      )}
+      <div aria-live="polite">
+        {busy && (
+          <p className="mt-4 text-[0.9375rem] text-navy">
+            Reading your document…
+          </p>
+        )}
+        {notice && (
+          <p className="mt-4 max-w-[62ch] border-l-2 border-navy pl-4 text-[0.9375rem] leading-relaxed text-ink">
+            {notice}
+          </p>
+        )}
+      </div>
 
       <div className="mt-10 border-t border-line pt-8">
         <p className="mb-4 leading-relaxed text-muted-foreground">
@@ -143,7 +155,6 @@ function Flow() {
   }, [hydrated, resumed]);
 
   const sections = visibleSections(draft);
-  const total = sections.length + 1; // upload step is step 0
   const section = step > 0 ? sections[step - 1] : null;
 
   if (!hydrated) {
@@ -233,11 +244,9 @@ function Flow() {
             </div>
           )}
 
-          {step > 0 && !done && (
-            <p className="mt-5 text-center text-sm text-muted-foreground">
-              Step {step} of {total - 1} · your answers save automatically
-            </p>
-          )}
+          {/* No step counter here: the header already carries the question
+              count and a progress bar, and a third signal saying something
+              different was pure working-memory noise. */}
         </div>
       </main>
     </>

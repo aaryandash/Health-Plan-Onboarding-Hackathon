@@ -58,6 +58,8 @@ interface IntakeContextValue {
   extractionSource: ExtractResult["source"] | null;
   /** False until localStorage has been read. Gate resume UI on this. */
   hydrated: boolean;
+  /** Drives the "Saved" confirmation. The copy promises autosave; this shows it. */
+  saveState: "idle" | "saving" | "saved";
   /** True when a previous session left answers behind. */
   resumed: boolean;
 
@@ -120,6 +122,7 @@ export function IntakeProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<PersistedState>(emptyState);
   const [hydrated, setHydrated] = useState(false);
   const [resumed, setResumed] = useState(false);
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved">("idle");
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -135,13 +138,17 @@ export function IntakeProvider({ children }: { children: React.ReactNode }) {
   // session with the empty initial state.
   useEffect(() => {
     if (!hydrated) return;
+    setSaveState("saving");
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
       try {
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        setSaveState("saved");
       } catch {
         // Private mode or a full quota. Losing autosave is survivable; losing
-        // the session to a thrown error is not.
+        // the session to a thrown error is not. Stay quiet rather than claim a
+        // save that did not happen.
+        setSaveState("idle");
       }
     }, SAVE_DEBOUNCE_MS);
     return () => {
@@ -263,6 +270,7 @@ export function IntakeProvider({ children }: { children: React.ReactNode }) {
       skipped: new Set(state.skipped),
       extractionSource: state.extractionSource,
       hydrated,
+      saveState,
       resumed,
       setField,
       skipField,
@@ -276,6 +284,7 @@ export function IntakeProvider({ children }: { children: React.ReactNode }) {
     [
       state,
       hydrated,
+      saveState,
       resumed,
       setField,
       skipField,

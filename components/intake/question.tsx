@@ -29,6 +29,41 @@ const selectClass =
 const inlineActionClass =
   "min-h-[44px] -my-2 py-2 text-[0.9375rem] font-medium text-navy underline underline-offset-4";
 
+/**
+ * Validation runs on blur, never while typing — correcting someone mid-word is
+ * exactly the scolding tone the brief warns against. Messages name the problem
+ * and the fix, and nothing here blocks progress: a field can still be skipped
+ * or left wrong, because the member is always in control (Product Principle 5).
+ */
+function validate(field: Field, value: unknown): string | null {
+  if (value === undefined || value === "") return null;
+
+  switch (field.type) {
+    case "email":
+      return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(value))
+        ? null
+        : "That doesn't look like an email address — check for a missing @ or a typo.";
+    case "zip":
+      return /^\d{5}$/.test(String(value))
+        ? null
+        : "A ZIP code is five digits, like 02210.";
+    case "percent": {
+      const pct = Number(value) * 100;
+      if (pct < 0) return "This can't be negative.";
+      if (pct > 100) return "Coinsurance is a share of the cost, so it can't be over 100%.";
+      return null;
+    }
+    case "currency":
+      return Number(value) < 0 ? "This can't be a negative amount." : null;
+    case "number":
+      if (Number(value) < 1) return "This needs to be at least 1.";
+      if (Number(value) > 20) return "That seems high — did you mean a smaller number?";
+      return null;
+    default:
+      return null;
+  }
+}
+
 function ProvenanceBadge({ kind }: { kind: "extracted" | "inferred" }) {
   const label =
     kind === "extracted" ? "from your document" : "we filled this in";
@@ -43,7 +78,9 @@ export function Question({ field }: { field: Field }) {
   const { draft, provenance, skipped, setField, skipField, unskipField } =
     useIntake();
   const id = useId();
+  const errorId = `${id}-error`;
   const [showHint, setShowHint] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const value = draft[field.key];
   const prov = provenance[field.key];
@@ -51,6 +88,16 @@ export function Question({ field }: { field: Field }) {
 
   function commit(next: PlanIntake[IntakeKey] | undefined) {
     setField(field.key, next as never);
+    // Clear a stale complaint as soon as they start fixing it.
+    if (error) setError(null);
+  }
+
+  const errorProps = error
+    ? { "aria-invalid": true as const, "aria-describedby": errorId }
+    : {};
+
+  function onBlur() {
+    setError(validate(field, draft[field.key]));
   }
 
   return (
@@ -164,7 +211,11 @@ export function Question({ field }: { field: Field }) {
               min={0}
               step={field.type === "percent" ? 1 : 0.01}
               placeholder={field.placeholder ?? "0"}
-              className={`${inputClass} ${field.type === "currency" ? "pl-8" : "pr-10"}`}
+              onBlur={onBlur}
+              {...errorProps}
+              className={`${inputClass} ${field.type === "currency" ? "pl-8" : "pr-10"} ${
+                error ? "border-destructive" : ""
+              }`}
               value={
                 value === undefined
                   ? ""
@@ -209,7 +260,9 @@ export function Question({ field }: { field: Field }) {
             }
             min={field.type === "number" ? 1 : undefined}
             placeholder={field.placeholder}
-            className={inputClass}
+            onBlur={onBlur}
+            {...errorProps}
+            className={`${inputClass} ${error ? "border-destructive" : ""}`}
             value={(value as string | number | undefined) ?? ""}
             onChange={(e) => {
               const raw = e.target.value;
@@ -219,6 +272,16 @@ export function Question({ field }: { field: Field }) {
           />
         )}
       </div>
+
+      {error && (
+        <p
+          id={errorId}
+          role="alert"
+          className="mt-2 text-[0.9375rem] leading-relaxed text-destructive"
+        >
+          {error}
+        </p>
+      )}
 
       <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-1">
         {field.findIt && (
