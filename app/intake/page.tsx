@@ -12,7 +12,7 @@ import { IntakeProvider, useIntake } from "@/lib/store";
 const actionClass =
   "flex min-h-[3.25rem] items-center justify-center rounded-[var(--radius)] " +
   "bg-primary px-6 text-[1.0625rem] font-semibold text-primary-foreground " +
-  "transition-colors hover:bg-[#a94d2c]";
+  "transition-colors hover:bg-navy-deep";
 
 function Counter() {
   const { questionsRemaining, progress, saveState } = useIntake();

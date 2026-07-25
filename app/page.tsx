@@ -39,7 +39,7 @@ export default function LandingPage() {
 
           <h1 className="mt-12 text-[2.5rem] leading-[1.03] font-bold tracking-tight sm:mt-14 sm:text-[4.5rem] sm:leading-[0.98]">
             Nobody should need a
-            <span className="text-[#f0a184]"> decoder ring </span>
+            <span className="text-sky"> decoder ring </span>
             to know what a doctor&rsquo;s visit costs.
           </h1>
 
@@ -51,7 +51,7 @@ export default function LandingPage() {
           <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
             <Link
               href="/intake"
-              className="flex min-h-[3.5rem] items-center justify-center rounded-[var(--radius)] bg-primary px-8 text-[1.0625rem] font-semibold text-primary-foreground transition-colors hover:bg-[#a94d2c]"
+              className="flex min-h-[3.5rem] items-center justify-center rounded-[var(--radius)] bg-white px-8 text-[1.0625rem] font-semibold text-navy transition-colors hover:bg-navy-tint"
             >
               Start form
             </Link>
@@ -123,7 +123,7 @@ PT RESP              172.40`}
               <li key={step.n} className="flex gap-6 sm:gap-8">
                 <span
                   aria-hidden
-                  className="font-heading shrink-0 text-[2.5rem] leading-none font-bold text-[#e37753] tabular-nums"
+                  className="font-heading shrink-0 text-[2.5rem] leading-none font-bold text-navy-soft tabular-nums"
                 >
                   {step.n}
                 </span>
@@ -174,7 +174,7 @@ PT RESP              172.40`}
 
           <Link
             href="/intake"
-            className="mt-12 flex min-h-[3.5rem] w-full items-center justify-center rounded-[var(--radius)] bg-primary px-8 text-[1.0625rem] font-semibold text-primary-foreground transition-colors hover:bg-[#a94d2c]"
+            className="mt-12 flex min-h-[3.5rem] w-full items-center justify-center rounded-[var(--radius)] bg-primary px-8 text-[1.0625rem] font-semibold text-primary-foreground transition-colors hover:bg-navy-deep"
           >
             Start form
           </Link>

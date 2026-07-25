@@ -83,7 +83,7 @@ function Summary() {
             </p>
             <Link
               href="/intake"
-              className={`${actionClass} mt-8 w-full bg-primary text-primary-foreground hover:bg-[#a94d2c]`}
+              className={`${actionClass} mt-8 w-full bg-primary text-primary-foreground hover:bg-navy-deep`}
             >
               Start filling it in
             </Link>
@@ -163,12 +163,12 @@ function Summary() {
                           <dd className="mt-1 font-medium text-ink sm:mt-0 sm:shrink-0 sm:text-right">
                             {row.display}
                             {provenance[row.key] === "extracted" && (
-                              <span className="ml-2 text-xs font-normal text-[#8f4326]">
+                              <span className="ml-2 text-xs font-normal text-navy-soft">
                                 from your document
                               </span>
                             )}
                             {provenance[row.key] === "inferred" && (
-                              <span className="ml-2 text-xs font-normal text-[#8f4326]">
+                              <span className="ml-2 text-xs font-normal text-navy-soft">
                                 we filled this in
                               </span>
                             )}
@@ -200,7 +200,7 @@ function Summary() {
               <button
                 type="button"
                 onClick={download}
-                className={`${actionClass} mt-6 w-full bg-primary text-primary-foreground hover:bg-[#a94d2c]`}
+                className={`${actionClass} mt-6 w-full bg-primary text-primary-foreground hover:bg-navy-deep`}
               >
                 Download your data (JSON)
               </button>

@@ -59,7 +59,7 @@ function ProvenanceBadge({ kind }: { kind: "extracted" | "inferred" }) {
   const label =
     kind === "extracted" ? "from your document" : "we filled this in";
   return (
-    <span className="inline-flex items-center rounded-full bg-[#fbeae2] px-2.5 py-1 text-xs font-medium text-[#8f4326]">
+    <span className="inline-flex items-center rounded-full bg-navy-tint px-2.5 py-1 text-xs font-medium text-navy">
       {label} · edit if wrong
     </span>
   );
